@@ -61,6 +61,8 @@ type Chore struct {
 	CompletionWindow     *int               `json:"completionWindow,omitempty" gorm:"column:completion_window"` // Number seconds before the chore is due that it can be completed
 	Points               *int               `json:"points,omitempty" gorm:"column:points"`                      // Points for completing the chore
 	Description          *string            `json:"description,omitempty" gorm:"type:text;column:description"`  // Description of the chore
+	PeriodStart          *time.Time         `json:"periodStart" gorm:"column:period_start"` // Start of active period
+	PeriodEnd            *time.Time         `json:"periodEnd" gorm:"column:period_end"`     // End of active period
 }
 
 type Status int8
@@ -167,4 +169,6 @@ type ChoreReq struct {
 	Points               *int                     `json:"points"`
 	CompletionWindow     *int                     `json:"completionWindow"`
 	Description          *string                  `json:"description"`
+	PeriodStart          *string                  `json:"periodStart"`
+	PeriodEnd            *string                  `json:"periodEnd"`
 }
