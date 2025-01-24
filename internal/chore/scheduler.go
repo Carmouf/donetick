@@ -17,13 +17,12 @@ func scheduleNextDueDate(chore *chModel.Chore, completedDate time.Time) (*time.T
 	}
 
 	var baseDate time.Time
-	if chore.NextDueDate != nil {
+	baseDate = completedDate.UTC()
+	if !chore.IsRolling && chore.NextDueDate != nil {
+		if completedDate.Before(*chore.NextDueDate) {
+			return chore.NextDueDate, nil
+		}
 		baseDate = chore.NextDueDate.UTC()
-	} else {
-		baseDate = completedDate.UTC()
-	}
-	if chore.IsRolling {
-		baseDate = completedDate.UTC()
 	}
 
 	frequencyMetadata := chModel.FrequencyMetadata{}
@@ -130,6 +129,7 @@ func scheduleNextDueDate(chore *chModel.Chore, completedDate time.Time) (*time.T
 
 	return &baseDate, nil
 }
+
 func scheduleAdaptiveNextDueDate(chore *chModel.Chore, completedDate time.Time, history []*chModel.ChoreHistory) (*time.Time, error) {
 
 	history = append([]*chModel.ChoreHistory{
@@ -163,6 +163,7 @@ func scheduleAdaptiveNextDueDate(chore *chModel.Chore, completedDate time.Time, 
 
 	return &nextDueDate, nil
 }
+
 func RemoveAssigneeAndReassign(chore *chModel.Chore, userID int) {
 	for i, assignee := range chore.Assignees {
 		if assignee.UserID == userID {
